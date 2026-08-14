@@ -1,0 +1,41 @@
+name: MOPS Alert daily watch
+
+on:
+  schedule:
+    # 13:30 UTC = 21:30 Taipei (UTC+8, no DST in Taiwan so this is stable
+    # year-round - unlike the local launchd version, this doesn't need the
+    # timezone-robust hourly-poll trick since the runner's clock isn't
+    # "traveling" with anyone).
+    - cron: "30 13 * * 1-5"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r requirements.txt
+
+      - run: python3 mops_watch.py
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+      - uses: actions/deploy-pages@v4
