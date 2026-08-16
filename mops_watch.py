@@ -39,20 +39,41 @@ Pages, instead of a local file opened with macOS's `open`.
 Data source: mopsov.twse.com.tw's live query AJAX endpoint (the same one the
 local project's mops_watch.py uses) - POST step=0&TYPEK=sii/otc returns a
 capped rolling window (~290 rows) of the most recent disclosures market-wide.
-Fetched ONCE per run (not once per person) and filtered five ways in memory -
-five people watching overlapping tickers doesn't mean five times the HTTP
-calls. Known limitation carried over unchanged: on a heavy-filing day this
-could miss something from earlier if pushed out of the window by run time.
+Fetched ONCE per run (not once per person) and filtered six ways in memory -
+six people watching overlapping tickers doesn't mean six times the HTTP calls.
+
+**Polling frequency raised + accumulation added, 2026-08-16** per Charles
+("那提高抓取頻率 在14:00, 15:00, 16:00, 17:00, 18:00, 21:30 各抓一次 並即時
+更新，保留當日的重大訊息"), after he asked why the ~290-row cap couldn't just
+be raised to 590 - tested several plausible parameter names (rows/pageSize/
+cnt/num) against the live endpoint and none changed the row count, so the
+cap looks server-side and not client-controllable. The actual fix: run six
+times a day instead of once, and CARRY FORWARD each day's findings across
+runs rather than each run only showing whatever's in the buffer at that
+moment - a disclosure that was visible at 14:00 but gets pushed out of the
+290-row window by 16:00 must still show up on the 16:00-21:30 pages.
+
+Since each run is a fresh GitHub Actions VM (no memory of earlier runs),
+accumulation needs real persistence - `state/<YYYY-MM-DD>.json` is committed
+back to the repo each run (see the workflow's "Commit state" step), holding
+every match found so far today per person. Each run: load today's state (or
+start empty if this is the day's first run) -> fetch live -> merge new
+matches into the existing accumulated set (deduped, same as before) -> save
+state -> render HTML from the ACCUMULATED set, not just this run's fetch.
+State files older than a week are pruned each run (see _prune_old_state) -
+they're tiny and only useful for the same day, no reason to keep piling up.
 
 Usage:
     python3 mops_watch.py [--dry-run]
 """
 import argparse
+import glob
+import json
 import os
 import re
 import ssl
 import urllib.request
-from datetime import datetime
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 import certifi
@@ -61,6 +82,8 @@ from html_report import render_hub, render_html
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DOCS_DIR = os.path.join(HERE, "docs")
+STATE_DIR = os.path.join(HERE, "state")
+STATE_MAX_AGE_DAYS = 7
 
 _SSL_CONTEXT = ssl.create_default_context(cafile=certifi.where())
 
@@ -212,30 +235,78 @@ def _dedup(matches):
     return out
 
 
+def _state_path(today_iso: str) -> str:
+    return os.path.join(STATE_DIR, f"{today_iso}.json")
+
+
+def _load_state(today_iso: str) -> dict:
+    """Returns {person_key: [[ticker, name, subject, announce_date], ...]}.
+    Empty dict if no state file exists yet for today (this run is the day's
+    first, or the file was pruned/never committed)."""
+    path = _state_path(today_iso)
+    if not os.path.isfile(path):
+        return {}
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _save_state(today_iso: str, state: dict) -> None:
+    os.makedirs(STATE_DIR, exist_ok=True)
+    with open(_state_path(today_iso), "w", encoding="utf-8") as f:
+        json.dump(state, f, ensure_ascii=False, indent=2, sort_keys=True)
+
+
+def _prune_old_state(today: datetime) -> None:
+    if not os.path.isdir(STATE_DIR):
+        return
+    cutoff = today.date() - timedelta(days=STATE_MAX_AGE_DAYS)
+    for path in glob.glob(os.path.join(STATE_DIR, "*.json")):
+        stem = os.path.splitext(os.path.basename(path))[0]
+        try:
+            file_date = datetime.strptime(stem, "%Y-%m-%d").date()
+        except ValueError:
+            continue  # not one of ours, leave it alone
+        if file_date < cutoff:
+            os.remove(path)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
     now = _taipei_now()
+    today_iso = now.date().isoformat()
     today_roc_slash = _to_roc_slash(now)
     updated_str = now.strftime("%Y-%m-%d %H:%M")
 
     today_rows = fetch_all_today_disclosures(today_roc_slash)
     print(f"Fetched {len(today_rows)} market-wide disclosures for {today_roc_slash}.")
 
+    if not args.dry_run:
+        _prune_old_state(now)
+    state = _load_state(today_iso)
+
     hub_people = []
 
     for key, person in PEOPLE.items():
         watchlist = person["tickers"]
-        matches = [
+        new_matches = [
             (ticker, name or watchlist[ticker], subject, adate)
             for ticker, name, adate, _atime, subject in today_rows
             if ticker in watchlist
         ]
-        matches = _dedup(matches)
 
-        print(f"{person['label']}: {len(watchlist)} tickers, {len(matches)} matches.")
+        # Accumulate: today's carried-forward state (from earlier runs today)
+        # plus whatever this run just found, deduped. A disclosure visible
+        # at 14:00 but pushed out of the live buffer by 18:00 must still
+        # show up here - that's the whole point of persisting state.
+        previous = [tuple(m) for m in state.get(key, [])]
+        matches = _dedup(previous + new_matches)
+        state[key] = [list(m) for m in matches]
+
+        print(f"{person['label']}: {len(watchlist)} tickers, "
+              f"{len(new_matches)} in this fetch, {len(matches)} accumulated today.")
         for ticker, name, subject, _ in matches:
             print(f"  {name}（{ticker}）: {subject[:60]}")
 
@@ -256,21 +327,23 @@ def main():
         person_dir = os.path.join(DOCS_DIR, key)
         os.makedirs(person_dir, exist_ok=True)
         output_path = os.path.join(person_dir, "index.html")
-        count_label = f"今日重大訊息 · {len(matches)} 則"
-        date_str = f"彙整日期：{now.date().isoformat()}　|　最後更新：{updated_str}（台北時間）"
+        count_label = f"今日重大訊息（累計）· {len(matches)} 則"
+        date_str = f"彙整日期：{today_iso}　|　最後更新：{updated_str}（台北時間）"
 
         render_html(output_path, person["label"], "重大訊息公告監控", date_str,
                     count_label, disclosures, back_href="../")
 
     if args.dry_run:
-        print("--dry-run: no HTML written.")
+        print("--dry-run: no HTML written, no state saved.")
         return
+
+    _save_state(today_iso, state)
 
     os.makedirs(DOCS_DIR, exist_ok=True)
     hub_path = os.path.join(DOCS_DIR, "index.html")
     hub_date_str = f"最後更新：{updated_str}（台北時間）"
     render_hub(hub_path, hub_date_str, hub_people)
-    print(f"HTML written to docs/ (hub + {len(PEOPLE)} person pages)")
+    print(f"HTML written to docs/ (hub + {len(PEOPLE)} person pages), state saved.")
 
 
 if __name__ == "__main__":
