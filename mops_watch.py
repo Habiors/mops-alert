@@ -9,7 +9,7 @@ the data source moved from the T-1 open-data gateway to this live endpoint).
 **Extended to 5 people 2026-08-16** per Charles: "我之後要給每個人（Eric, ian,
 ryan, jun, Charles）個字的mopsalert 請你幫我做出區隔" - was a single page
 (Eric's watchlist only). Each person's watchlist is that person's own sibling
-robot's TW-listed tier tickers (CharlesRobot/SavvyIanRobot/JunRobot/RyanRobot/
+robot's TW-listed tier tickers (CharlesRobot/SavvyIanRobot/JyunRobot/RyanRobot/
 EricRobot's sector_digest.py, pulled 2026-08-16 - a point-in-time snapshot,
 not a live link to those repos). **Nick added same day** ("nick呢") -
 NickRobot's watchlist (25 tickers, Tier1封測10 + Tier2設備15), pulled from
@@ -22,6 +22,12 @@ CharlesRobot's sector_digest.py tiers anymore. Dropped the 18-ticker 零組件
 Charles's MOPS-alert list is now just Tier1 IC設計/控制晶片 + Tier2 光通訊
 光學元件 (26 tickers). If CharlesRobot's own sector_digest.py changes later,
 don't assume this watchlist should follow - it diverged on purpose.
+
+**JunRobot renamed to JyunRobot, same day** ("Junrobot以後幫我改為
+JyunRobot") - a full rename (project directory, launchd job, output
+filenames, and this page's key/label all changed from Jun/jun to Jyun/jyun).
+Historical PDFs already produced under the old `MorningReport_Jun_*.pdf`
+naming were NOT renamed - only things going forward use Jyun.
 
 Migrated to run on GitHub Actions instead of local launchd because the local
 version required Charles's laptop to stay powered on and awake through 21:30
@@ -99,8 +105,8 @@ PEOPLE = {
             "3533": "嘉澤", "3665": "貿聯-KY", "3653": "健策", "2059": "川湖",
         },
     },
-    "jun": {
-        "label": "Jun",
+    "jyun": {
+        "label": "Jyun",
         "beat": "半導體核心供應鏈",
         "tickers": {
             "2330": "台積電", "2454": "聯發科", "3443": "創意", "3711": "日月光投控",
