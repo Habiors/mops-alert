@@ -15,6 +15,14 @@ not a live link to those repos). **Nick added same day** ("nick呢") -
 NickRobot's watchlist (25 tickers, Tier1封測10 + Tier2設備15), pulled from
 NickRobot's own sector_digest.py the same way as the other five.
 
+**Charles's watchlist trimmed 2026-08-16** ("remove零組件供應鏈") - this
+MOPS-alert watchlist is now his own scoped subset, not a full mirror of
+CharlesRobot's sector_digest.py tiers anymore. Dropped the 18-ticker 零組件
+供應鏈 category (台達電/緯穎/緯創/PCB-載板/CCL/被動元件/連接器names) entirely -
+Charles's MOPS-alert list is now just Tier1 IC設計/控制晶片 + Tier2 光通訊
+光學元件 (26 tickers). If CharlesRobot's own sector_digest.py changes later,
+don't assume this watchlist should follow - it diverged on purpose.
+
 Migrated to run on GitHub Actions instead of local launchd because the local
 version required Charles's laptop to stay powered on and awake through 21:30
 every weekday - this runs on GitHub's own infrastructure instead, no local
@@ -66,7 +74,7 @@ _ROW_RE = re.compile(
 PEOPLE = {
     "charles": {
         "label": "Charles",
-        "beat": "IC設計/控制晶片 + 光通訊光學元件 + 零組件供應鏈",
+        "beat": "IC設計/控制晶片 + 光通訊光學元件",
         "tickers": {
             "2330": "台積電", "2454": "聯發科", "2379": "瑞昱", "3443": "創意",
             "3661": "世芯-KY", "3529": "力旺", "3034": "聯詠", "5269": "祥碩",
@@ -76,12 +84,6 @@ PEOPLE = {
             "3491": "昇達科", "3363": "上詮", "3163": "波若威", "4979": "華星光",
             "2455": "全新", "3450": "聯鈞", "7917": "源傑科技", "4971": "IET-KY",
             "4991": "環宇-KY",
-            "2308": "台達電", "6669": "緯穎", "3231": "緯創",
-            "3037": "欣興", "8046": "南電", "3189": "景碩", "4958": "臻鼎-KY",
-            "2368": "金像電", "2313": "華通",
-            "2383": "台光電", "6274": "台燿",
-            "2327": "國巨", "2492": "華新科", "3042": "晶技",
-            "3533": "嘉澤", "3665": "貿聯-KY", "3653": "健策", "2059": "川湖",
         },
     },
     "ian": {
