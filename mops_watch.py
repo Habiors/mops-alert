@@ -11,8 +11,9 @@ ryan, jun, Charles）個字的mopsalert 請你幫我做出區隔" - was a single
 (Eric's watchlist only). Each person's watchlist is that person's own sibling
 robot's TW-listed tier tickers (CharlesRobot/SavvyIanRobot/JunRobot/RyanRobot/
 EricRobot's sector_digest.py, pulled 2026-08-16 - a point-in-time snapshot,
-not a live link to those repos). Nick was NOT requested, so NickRobot's
-watchlist isn't included here - don't add it unprompted.
+not a live link to those repos). **Nick added same day** ("nick呢") -
+NickRobot's watchlist (25 tickers, Tier1封測10 + Tier2設備15), pulled from
+NickRobot's own sector_digest.py the same way as the other five.
 
 Migrated to run on GitHub Actions instead of local launchd because the local
 version required Charles's laptop to stay powered on and awake through 21:30
@@ -118,6 +119,19 @@ PEOPLE = {
             "8028": "昇陽半導體",
             "1519": "華城", "7750": "新代", "1590": "亞德客-KY", "2049": "上銀",
             "3587": "閎康",
+        },
+    },
+    "nick": {
+        "label": "Nick",
+        "beat": "封測(OSAT) + 中小型半導體/PCB設備",
+        "tickers": {
+            "3711": "日月光投控", "2449": "京元電子", "6257": "矽格", "6147": "頎邦",
+            "3264": "欣銓", "6451": "訊芯-KY", "6239": "力成", "6223": "旺矽",
+            "6515": "穎崴", "6510": "中華精測",
+            "6187": "萬潤", "3131": "弘塑", "7734": "印能科技", "6640": "均華",
+            "7751": "竑騰", "4573": "高明鐵", "7856": "漢測", "7728": "光焱科技",
+            "3563": "牧德", "3030": "德律", "7822": "倍利科", "2467": "志聖",
+            "3167": "大量", "8021": "尖點", "7795": "長廣",
         },
     },
     "eric": {
