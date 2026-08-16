@@ -72,6 +72,8 @@ import json
 import os
 import re
 import ssl
+import time
+import urllib.error
 import urllib.request
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
@@ -193,8 +195,16 @@ def _to_roc_slash(dt: datetime) -> str:
     return f"{dt.year - 1911}/{dt.month:02d}/{dt.day:02d}"
 
 
-def _fetch_live_table(typek: str) -> list:
-    """typek: 'sii' (TWSE) or 'otc' (TPEx)."""
+def _fetch_live_table(typek: str, attempts: int = 3) -> list:
+    """typek: 'sii' (TWSE) or 'otc' (TPEx).
+
+    Retries on transient failures (added 2026-08-16 after a real one-off
+    HTTP 307 from GitHub's runner IP - confirmed intermittent, not a
+    persistent geo-block, by re-testing the same request from Charles's Mac
+    seconds later and getting a normal 200. Now that this runs 6x/day and
+    accumulation depends on each run actually succeeding, a single transient
+    hiccup shouldn't cost an entire polling slot if a quick retry would fix
+    it - this is NOT a fix for a real block, just resilience against noise."""
     req = urllib.request.Request(
         LIVE_URL,
         data=f"step=0&TYPEK={typek}".encode("utf-8"),
@@ -204,8 +214,22 @@ def _fetch_live_table(typek: str) -> list:
             "Content-Type": "application/x-www-form-urlencoded",
         },
     )
-    with urllib.request.urlopen(req, timeout=30, context=_SSL_CONTEXT) as resp:
-        html_text = resp.read().decode("utf-8", errors="replace")
+    last_exc = None
+    for attempt in range(1, attempts + 1):
+        try:
+            with urllib.request.urlopen(req, timeout=30, context=_SSL_CONTEXT) as resp:
+                html_text = resp.read().decode("utf-8", errors="replace")
+            break
+        except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as exc:
+            last_exc = exc
+            print(f"  _fetch_live_table({typek}): attempt {attempt}/{attempts} "
+                  f"failed ({exc}), retrying..." if attempt < attempts else
+                  f"  _fetch_live_table({typek}): attempt {attempt}/{attempts} failed ({exc}), giving up.")
+            if attempt < attempts:
+                time.sleep(5)
+    else:
+        raise last_exc
+
     rows = []
     for m in _ROW_RE.finditer(html_text):
         ticker, name, adate, atime, subject = m.groups()
