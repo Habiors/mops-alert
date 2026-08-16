@@ -1,8 +1,12 @@
 """
-HTML renderer for the mops-alert cloud page (adapted 2026-08-14 from
-MOPSAlertRobot's local version at ~/Projects/MOPSAlertRobot/html_report.py).
-Same look, no external assets, light/dark via prefers-color-scheme - the
-whole point of a static single-file page hosted on GitHub Pages.
+HTML renderer for the mops-alert cloud pages.
+
+Extended 2026-08-16 per Charles: "我之後要給每個人（Eric, ian, ryan, jun,
+Charles）個字的mopsalert 請你幫我做出區隔" - was a single shared page
+(Eric's watchlist only), now renders one page per person plus a hub/landing
+page linking to all five. Same look across every page (own <style> block, no
+external assets, light/dark via prefers-color-scheme) - the whole point of a
+static site hosted on GitHub Pages.
 """
 import html as _html
 
@@ -35,6 +39,9 @@ body {
 header { padding-bottom: 20px; margin-bottom: 26px; border-bottom: 2px solid var(--ink); }
 .brand { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.08em;
   text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.backlink { font-family: var(--font-mono); font-size: 12px; margin-bottom: 14px; }
+.backlink a { color: var(--accent); text-decoration: none; }
+.backlink a:hover { text-decoration: underline; }
 h1 { font-family: var(--font-display); font-weight: 600; font-size: 28px; margin: 0 0 8px; }
 .meta { font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); }
 .count { font-family: var(--font-mono); font-size: 12px; color: var(--muted);
@@ -50,11 +57,44 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: 28px; margin
 .empty { color: var(--muted); font-size: 14.5px; padding: 20px 0; }
 footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
   color: var(--muted); font-size: 11.5px; font-family: var(--font-mono); }
+
+/* hub-page specific */
+.hub-grid { display: grid; gap: 14px; }
+.hub-card {
+  display: block; text-decoration: none; color: inherit;
+  background: var(--paper-raised); border: 1px solid var(--line);
+  border-left: 3px solid var(--accent); border-radius: 8px;
+  padding: 18px 20px;
+}
+.hub-card:hover { border-left-width: 5px; padding-left: 18px; }
+.hub-card .name { font-weight: 700; font-size: 17px; margin-bottom: 4px; }
+.hub-card .stat { font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); }
+.hub-card .stat.has-news { color: var(--accent); font-weight: 600; }
 """
 
 
-def render_html(output_path, title, date_str, count_label, disclosures):
-    """disclosures: list of dicts with keys ticker, name, subject, announce_date."""
+def _page_shell(body_html, title, brand="MOPS Alert"):
+    return f"""<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{_html.escape(title)}</title>
+<style>{_CSS}</style>
+</head>
+<body>
+<div class="page">
+{body_html}
+</div>
+</body>
+</html>
+"""
+
+
+def render_html(output_path, person_label, title, date_str, count_label, disclosures,
+                 back_href="../"):
+    """Per-person page. disclosures: list of dicts with keys ticker, name,
+    subject, announce_date."""
     cards = []
     if disclosures:
         for d in disclosures:
@@ -69,28 +109,45 @@ def render_html(output_path, title, date_str, count_label, disclosures):
     else:
         body_html = '<div class="empty">今日監控清單內無公司發布重大訊息公告。</div>'
 
-    doc = f"""<!doctype html>
-<html lang="zh-Hant">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{_html.escape(title)}</title>
-<style>{_CSS}</style>
-</head>
-<body>
-<div class="page">
-  <header>
-    <div class="brand">MOPS Alert</div>
+    body = f"""  <header>
+    <div class="brand">MOPS Alert · {_html.escape(person_label)}</div>
+    <div class="backlink"><a href="{_html.escape(back_href)}">← 回總覽</a></div>
     <h1>{_html.escape(title)}</h1>
     <div class="meta">{_html.escape(date_str)}</div>
   </header>
   <div class="count">{_html.escape(count_label)}</div>
   {body_html}
-  <footer>資料來源：mopsov.twse.com.tw 即時重大訊息查詢・由 GitHub Actions 每日自動更新</footer>
-</div>
-</body>
-</html>
-"""
+  <footer>資料來源：mopsov.twse.com.tw 即時重大訊息查詢・由 GitHub Actions 每日自動更新</footer>"""
+
     with open(output_path, "w", encoding="utf-8") as f:
-        f.write(doc)
+        f.write(_page_shell(body, title, brand=f"MOPS Alert · {person_label}"))
+    return output_path
+
+
+def render_hub(output_path, date_str, people):
+    """Landing page linking to each person's page.
+    people: list of dicts with keys label, href, count."""
+    cards = []
+    for p in people:
+        stat_class = "stat has-news" if p["count"] > 0 else "stat"
+        stat_text = f"今日 {p['count']} 則" if p["count"] > 0 else "今日無公告"
+        cards.append(
+            f'<a class="hub-card" href="{_html.escape(p["href"])}">'
+            f'<div class="name">{_html.escape(p["label"])}</div>'
+            f'<div class="{stat_class}">{_html.escape(stat_text)}</div>'
+            '</a>'
+        )
+
+    body = f"""  <header>
+    <div class="brand">MOPS Alert</div>
+    <h1>重大訊息公告監控</h1>
+    <div class="meta">{_html.escape(date_str)}</div>
+  </header>
+  <div class="hub-grid">
+    {"".join(cards)}
+  </div>
+  <footer>資料來源：mopsov.twse.com.tw 即時重大訊息查詢・由 GitHub Actions 每日自動更新</footer>"""
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(_page_shell(body, "MOPS Alert 總覽"))
     return output_path
