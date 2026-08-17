@@ -93,9 +93,36 @@ LIVE_URL = "https://mopsov.twse.com.tw/mops/web/ajax_t05sr01_1"
 
 _ROW_RE = re.compile(
     r"<td>(\d{4,6})</td>\s*<td[^>]*>([^<]*)</td>\s*<td[^>]*>([\d/]+)</td>\s*"
-    r"<td[^>]*>([\d:]+)</td>\s*<td[^>]*>(.*?)</td>\s*<td>",
+    r"<td[^>]*>([\d:]+)</td>\s*<td[^>]*>(.*?)</td>\s*<td>\s*"
+    r"<input[^>]*onclick=\"([^\"]*)\"",
     re.S,
 )
+
+# Each row's "詳細資料" button doesn't link anywhere - clicking it runs this
+# inline JS, which fills these hidden form fields on the page's own <form>
+# and re-POSTs it (see mops2.js's openWindow()) to fetch the full disclosure
+# text. Added 2026-08-17 per Charles ("我需要的就是連接到這個按鈕之後的網頁") -
+# confirmed by direct testing that POSTing these same fields to LIVE_URL with
+# step=1 returns the detail page, so a plain auto-submitting <form> (no JS)
+# reproduces the same click without needing to touch MOPS's own script.
+_ONCLICK_FIELD_RE = re.compile(
+    r"\.(SEQ_NO|SPOKE_TIME|SPOKE_DATE|COMPANY_ID|skey)\.value='([^']*)'"
+)
+
+
+def _parse_detail(onclick: str, typek: str) -> dict | None:
+    fields = dict(_ONCLICK_FIELD_RE.findall(onclick))
+    required = ("SEQ_NO", "SPOKE_TIME", "SPOKE_DATE", "COMPANY_ID", "skey")
+    if not all(f in fields for f in required):
+        return None  # unexpected onclick shape - degrade to no-link rather than crash
+    return {
+        "typek": typek,
+        "seq_no": fields["SEQ_NO"],
+        "spoke_time": fields["SPOKE_TIME"],
+        "spoke_date": fields["SPOKE_DATE"],
+        "company_id": fields["COMPANY_ID"],
+        "skey": fields["skey"],
+    }
 
 # Each person's watchlist = their own sibling robot's TW-listed tier tickers
 # (pulled directly from each repo's sector_digest.py on 2026-08-16). US
@@ -232,9 +259,10 @@ def _fetch_live_table(typek: str, attempts: int = 3) -> list:
 
     rows = []
     for m in _ROW_RE.finditer(html_text):
-        ticker, name, adate, atime, subject = m.groups()
+        ticker, name, adate, atime, subject, onclick = m.groups()
         subject = re.sub(r"\s+", " ", subject).strip()
-        rows.append((ticker, name.strip(), adate, atime, subject))
+        detail = _parse_detail(onclick, typek)
+        rows.append((ticker, name.strip(), adate, atime, subject, detail))
     return rows
 
 
@@ -264,7 +292,8 @@ def _state_path(today_iso: str) -> str:
 
 
 def _load_state(today_iso: str) -> dict:
-    """Returns {person_key: [[ticker, name, subject, announce_date], ...]}.
+    """Returns {person_key: [[ticker, name, subject, announce_date, detail], ...]}
+    (older entries may only have 4 elements - see main()'s padding step).
     Empty dict if no state file exists yet for today (this run is the day's
     first, or the file was pruned/never committed)."""
     path = _state_path(today_iso)
@@ -316,8 +345,8 @@ def main():
     for key, person in PEOPLE.items():
         watchlist = person["tickers"]
         new_matches = [
-            (ticker, name or watchlist[ticker], subject, adate)
-            for ticker, name, adate, _atime, subject in today_rows
+            (ticker, name or watchlist[ticker], subject, adate, detail)
+            for ticker, name, adate, _atime, subject, detail in today_rows
             if ticker in watchlist
         ]
 
@@ -325,13 +354,20 @@ def main():
         # plus whatever this run just found, deduped. A disclosure visible
         # at 14:00 but pushed out of the live buffer by 18:00 must still
         # show up here - that's the whole point of persisting state.
-        previous = [tuple(m) for m in state.get(key, [])]
+        # Pad older 4-element state entries (saved before the 2026-08-17
+        # detail-link field was added) with detail=None so they still
+        # unpack correctly - they just render without a "查看原始公告" link.
+        previous = []
+        for m in state.get(key, []):
+            if len(m) == 4:
+                m = list(m) + [None]
+            previous.append(tuple(m))
         matches = _dedup(previous + new_matches)
         state[key] = [list(m) for m in matches]
 
         print(f"{person['label']}: {len(watchlist)} tickers, "
               f"{len(new_matches)} in this fetch, {len(matches)} accumulated today.")
-        for ticker, name, subject, _ in matches:
+        for ticker, name, subject, _adate, _detail in matches:
             print(f"  {name}（{ticker}）: {subject[:60]}")
 
         hub_people.append({
@@ -344,8 +380,9 @@ def main():
             continue
 
         disclosures = [
-            {"ticker": ticker, "name": name, "subject": subject, "announce_date": adate}
-            for ticker, name, subject, adate in matches
+            {"ticker": ticker, "name": name, "subject": subject, "announce_date": adate,
+             "detail": detail}
+            for ticker, name, subject, adate, detail in matches
         ]
 
         person_dir = os.path.join(DOCS_DIR, key)

@@ -54,6 +54,13 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: 28px; margin
 .card .co { font-weight: 700; font-size: 15.5px; margin-bottom: 4px; }
 .card .co .code { font-family: var(--font-mono); font-weight: 400; color: var(--muted); font-size: 12.5px; margin-left: 4px; }
 .card .subject { font-size: 14.5px; color: var(--ink-soft); line-height: 1.6; }
+.detail-form { margin: 8px 0 0; }
+.detail-link {
+  background: none; border: none; padding: 0; margin: 0;
+  font: inherit; font-family: var(--font-mono); font-size: 12.5px;
+  color: var(--accent); cursor: pointer; text-decoration: underline;
+}
+.detail-link:hover { color: var(--ink); }
 .empty { color: var(--muted); font-size: 14.5px; padding: 20px 0; }
 footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
   color: var(--muted); font-size: 11.5px; font-family: var(--font-mono); }
@@ -91,10 +98,44 @@ def _page_shell(body_html, title, brand="MOPS Alert"):
 """
 
 
+LIVE_URL = "https://mopsov.twse.com.tw/mops/web/ajax_t05sr01_1"
+
+
+def _detail_form_html(detail):
+    """Reproduces MOPS's own "詳細資料" button as a plain auto-postable form
+    (no JS needed) - added 2026-08-17 per Charles ("我需要的就是連接到這個按鈕
+    之後的網頁"). MOPS renders that button's target via a JS-only re-POST of
+    hidden fields (see mops_watch.py's _parse_detail docstring), so a normal
+    <a href> can't reach it - this <form> reproduces the same POST a real
+    click would send. `detail` is None for older accumulated rows saved
+    before this field existed - degrade to no link rather than a broken one."""
+    if not detail:
+        return ""
+    fields = {
+        "TYPEK": detail["typek"],
+        "step": "1",
+        "skey": detail["skey"],
+        "COMPANY_ID": detail["company_id"],
+        "SPOKE_DATE": detail["spoke_date"],
+        "SPOKE_TIME": detail["spoke_time"],
+        "SEQ_NO": detail["seq_no"],
+    }
+    inputs = "".join(
+        f'<input type="hidden" name="{_html.escape(k)}" value="{_html.escape(v)}">'
+        for k, v in fields.items()
+    )
+    return (
+        f'<form class="detail-form" method="post" action="{LIVE_URL}" target="_blank">'
+        f"{inputs}"
+        '<button type="submit" class="detail-link">查看原始公告 →</button>'
+        "</form>"
+    )
+
+
 def render_html(output_path, person_label, title, date_str, count_label, disclosures,
                  back_href="../"):
     """Per-person page. disclosures: list of dicts with keys ticker, name,
-    subject, announce_date."""
+    subject, announce_date, detail (detail may be None - see _detail_form_html)."""
     cards = []
     if disclosures:
         for d in disclosures:
@@ -103,6 +144,7 @@ def render_html(output_path, person_label, title, date_str, count_label, disclos
                 f'<div class="co">{_html.escape(d["name"])}'
                 f'<span class="code">{_html.escape(d["ticker"])}</span></div>'
                 f'<div class="subject">{_html.escape(d["subject"])}</div>'
+                f'{_detail_form_html(d.get("detail"))}'
                 '</div>'
             )
         body_html = "\n".join(cards)
