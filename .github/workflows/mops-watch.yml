@@ -11,12 +11,18 @@ on:
     # filed earlier in the day if it aged out of that window - polling more
     # often, combined with state/ accumulation in mops_watch.py, fixes that.
     # No DST in Taiwan, so these UTC offsets are stable year-round.
-    - cron: "0 6 * * 1-5"    # 14:00 Taipei
-    - cron: "0 7 * * 1-5"    # 15:00 Taipei
-    - cron: "0 8 * * 1-5"    # 16:00 Taipei
-    - cron: "0 9 * * 1-5"    # 17:00 Taipei
-    - cron: "0 10 * * 1-5"   # 18:00 Taipei
-    - cron: "30 13 * * 1-5"  # 21:30 Taipei
+    #
+    # Shifted 4 min earlier than the original on-the-hour slots 2026-08-17
+    # per Charles. Note this does NOT compensate for GitHub's own schedule-
+    # trigger delay (observed up to ~36 min on this repo on 2026-08-17,
+    # unrelated to the cron time chosen) - it's just a 4-minute offset from
+    # the previous :00/:30 slots.
+    - cron: "56 5 * * 1-5"   # 13:56 Taipei
+    - cron: "56 6 * * 1-5"   # 14:56 Taipei
+    - cron: "56 7 * * 1-5"   # 15:56 Taipei
+    - cron: "56 8 * * 1-5"   # 16:56 Taipei
+    - cron: "56 9 * * 1-5"   # 17:56 Taipei
+    - cron: "26 13 * * 1-5"  # 21:26 Taipei
   workflow_dispatch: {}
 
 permissions:
