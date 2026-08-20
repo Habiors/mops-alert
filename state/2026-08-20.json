@@ -215,6 +215,20 @@
         "spoke_time": "170448",
         "typek": "otc"
       }
+    ],
+    [
+      "7769",
+      "鴻勁",
+      "本公司代子公司Top Vintage International Ltd.公告取得固定收益證券",
+      "115/08/20",
+      {
+        "company_id": "7769",
+        "seq_no": "1",
+        "skey": "7769202608201",
+        "spoke_date": "20260820",
+        "spoke_time": "173432",
+        "typek": "sii"
+      }
     ]
   ],
   "nick": [
