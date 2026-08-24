@@ -27,6 +27,34 @@
         "spoke_time": "163348",
         "typek": "otc"
       }
+    ],
+    [
+      "2379",
+      "瑞昱",
+      "公告本公司115年除息基準日",
+      "115/08/24",
+      {
+        "company_id": "2379",
+        "seq_no": "1",
+        "skey": "2379202608201",
+        "spoke_date": "20260824",
+        "spoke_time": "170007",
+        "typek": "sii"
+      }
+    ],
+    [
+      "3105",
+      "穩懋",
+      "公告本公司審計委員會及薪資報酬委員會委員辭任",
+      "115/08/24",
+      {
+        "company_id": "3105",
+        "seq_no": "2",
+        "skey": "3105202608242",
+        "spoke_date": "20260824",
+        "spoke_time": "163416",
+        "typek": "otc"
+      }
     ]
   ],
   "eric": [
@@ -143,6 +171,48 @@
         "spoke_time": "162542",
         "typek": "sii"
       }
+    ],
+    [
+      "2313",
+      "華通",
+      "代子公司COMPEQ Technology (Thailand) CO., LTD.公告擬向關係人取得土地",
+      "115/08/24",
+      {
+        "company_id": "2313",
+        "seq_no": "2",
+        "skey": "2313202608242",
+        "spoke_date": "20260824",
+        "spoke_time": "170046",
+        "typek": "sii"
+      }
+    ],
+    [
+      "2313",
+      "華通",
+      "代子公司COMPEQ (Thailand) CO., LTD.公告擬處分土地予關係人",
+      "115/08/24",
+      {
+        "company_id": "2313",
+        "seq_no": "1",
+        "skey": "2313202608241",
+        "spoke_date": "20260824",
+        "spoke_time": "165918",
+        "typek": "sii"
+      }
+    ],
+    [
+      "2383",
+      "台光電",
+      "本公司受邀參加國泰證券舉辦之法人說明會",
+      "115/08/24",
+      {
+        "company_id": "2383",
+        "seq_no": "1",
+        "skey": "2383202608241",
+        "spoke_date": "20260824",
+        "spoke_time": "164036",
+        "typek": "sii"
+      }
     ]
   ],
   "jyun": [
@@ -230,6 +300,20 @@
         "spoke_date": "20260824",
         "spoke_time": "151810",
         "typek": "otc"
+      }
+    ],
+    [
+      "2467",
+      "志聖",
+      "本公司受邀參加Jefferies主辦之「Jefferies 2026 Semiconductor, IT Hardware & Communications Technology Conference」，會中就本公司115年第2季之財務報告相關資訊暨營運概況進行說明。",
+      "115/08/24",
+      {
+        "company_id": "2467",
+        "seq_no": "1",
+        "skey": "2467202608241",
+        "spoke_date": "20260824",
+        "spoke_time": "171553",
+        "typek": "sii"
       }
     ]
   ],
