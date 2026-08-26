@@ -227,6 +227,20 @@
         "spoke_time": "154551",
         "typek": "sii"
       }
+    ],
+    [
+      "4958",
+      "臻鼎-KY",
+      "代子公司慶鼎精密電子(淮安)有限公司公告取得機器設備",
+      "115/08/26",
+      {
+        "company_id": "4958",
+        "seq_no": "2",
+        "skey": "4958202608262",
+        "spoke_date": "20260826",
+        "spoke_time": "215201",
+        "typek": "sii"
+      }
     ]
   ],
   "jyun": [
@@ -396,6 +410,20 @@
         "spoke_date": "20260826",
         "spoke_time": "180726",
         "typek": "otc"
+      }
+    ],
+    [
+      "7769",
+      "鴻勁",
+      "本公司代子公司Top Vintage International Ltd.公告取得固定收益證券",
+      "115/08/26",
+      {
+        "company_id": "7769",
+        "seq_no": "1",
+        "skey": "7769202608261",
+        "spoke_date": "20260826",
+        "spoke_time": "184756",
+        "typek": "sii"
       }
     ]
   ],
