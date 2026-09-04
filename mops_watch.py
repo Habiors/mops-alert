@@ -177,11 +177,18 @@ PEOPLE = {
         "tickers": {
             "2404": "漢唐", "6139": "亞翔", "5536": "聖暉*", "6691": "洋基工程",
             "6944": "兆聯實業", "2330": "台積電", "8299": "群聯", "5289": "宜鼎",
+            "6613": "朋億", "7703": "銳澤", "2464": "盟立自動化",
             "6488": "環球晶", "1560": "中砂", "5434": "崇越", "1785": "光洋科",
-            "8028": "昇陽半導體",
+            "8028": "昇陽半導體", "7918": "創鉅材料",
             "1519": "華城", "7750": "新代", "1590": "亞德客-KY", "2049": "上銀",
-            "3587": "閎康", "8996": "高力",
+            "3587": "閎康", "8996": "高力", "4576": "大銀微系統", "6739": "竹陞科技",
         },
+        # 2026-09-04: added 6613/7703/2464 (Tier1), 7918 (Tier2), 4576/6739
+        # (Tier3) to mirror RyanRobot's sibling-robot watchlist addition of the
+        # same date (8996 高力 was already present in both). BE (Bloom Energy)
+        # was NOT added here since it's a US ticker with no TWSE/TPEx filings -
+        # MOPS-alert only tracks TW-listed material disclosures (see MU/ENTG,
+        # also excluded from this dict for the same reason).
     },
     "nick": {
         "label": "Nick",
@@ -331,6 +338,20 @@ def main():
     args = parser.parse_args()
 
     now = _taipei_now()
+
+    # 2026-09-04 per Charles ("如果在晚上11:30以前沒有做最後一次更新，就不需要再
+    # 做更新"): the last scheduled slot is 21:26 Taipei, but GitHub's own
+    # schedule-trigger delay has been observed up to ~36 min on this repo -
+    # if it slips even further and this run actually starts after 23:30
+    # Taipei, treat the day as already closed and skip entirely rather than
+    # doing a late catch-up update. Doesn't apply to a manual
+    # workflow_dispatch trigger, which should always run when asked.
+    if not args.dry_run and now.hour * 60 + now.minute >= 23 * 60 + 30 \
+            and os.environ.get("GITHUB_EVENT_NAME") == "schedule":
+        print(f"It's {now.strftime('%H:%M')} Taipei - past the 23:30 cutoff "
+              f"for today's last scheduled slot. Skipping this run.")
+        return
+
     today_iso = now.date().isoformat()
     today_roc_slash = _to_roc_slash(now)
     updated_str = now.strftime("%Y-%m-%d %H:%M")
