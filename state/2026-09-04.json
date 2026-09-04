@@ -225,6 +225,34 @@
         "spoke_time": "145002",
         "typek": "sii"
       }
+    ],
+    [
+      "2308",
+      "台達電",
+      "本公司代子公司DEISG公告一年內累積取得同一有價證券達新台幣三億元以上",
+      "115/09/04",
+      {
+        "company_id": "2308",
+        "seq_no": "2",
+        "skey": "2308202609042",
+        "spoke_date": "20260904",
+        "spoke_time": "193600",
+        "typek": "sii"
+      }
+    ],
+    [
+      "2308",
+      "台達電",
+      "本公司代子公司Delta Germany及DIH公告取得及處分Delta Controls Germany GmbH 股權案",
+      "115/09/04",
+      {
+        "company_id": "2308",
+        "seq_no": "1",
+        "skey": "2308202609041",
+        "spoke_date": "20260904",
+        "spoke_time": "180310",
+        "typek": "sii"
+      }
     ]
   ],
   "ian": [
@@ -351,6 +379,34 @@
         "skey": "2382202609041",
         "spoke_date": "20260904",
         "spoke_time": "135108",
+        "typek": "sii"
+      }
+    ],
+    [
+      "2308",
+      "台達電",
+      "本公司代子公司DEISG公告一年內累積取得同一有價證券達新台幣三億元以上",
+      "115/09/04",
+      {
+        "company_id": "2308",
+        "seq_no": "2",
+        "skey": "2308202609042",
+        "spoke_date": "20260904",
+        "spoke_time": "193600",
+        "typek": "sii"
+      }
+    ],
+    [
+      "2308",
+      "台達電",
+      "本公司代子公司Delta Germany及DIH公告取得及處分Delta Controls Germany GmbH 股權案",
+      "115/09/04",
+      {
+        "company_id": "2308",
+        "seq_no": "1",
+        "skey": "2308202609041",
+        "spoke_date": "20260904",
+        "spoke_time": "180310",
         "typek": "sii"
       }
     ]
@@ -512,6 +568,20 @@
         "spoke_date": "20260904",
         "spoke_time": "171741",
         "typek": "otc"
+      }
+    ],
+    [
+      "8996",
+      "高力",
+      "補充公告本公司取得橋頭科學園區使用權資產",
+      "115/09/04",
+      {
+        "company_id": "8996",
+        "seq_no": "1",
+        "skey": "8996202609041",
+        "spoke_date": "20260904",
+        "spoke_time": "182352",
+        "typek": "sii"
       }
     ]
   ]
