@@ -1,8 +1,66 @@
 {
-  "charles": [],
+  "charles": [
+    [
+      "6415",
+      "矽力*-KY",
+      "本公司受邀參加永豐金證券2026年產業投資論壇",
+      "115/09/04",
+      {
+        "company_id": "6415",
+        "seq_no": "3",
+        "skey": "6415202609043",
+        "spoke_date": "20260904",
+        "spoke_time": "101932",
+        "typek": "sii"
+      }
+    ],
+    [
+      "6415",
+      "矽力*-KY",
+      "本公司受邀參加UBS Taiwan Summit 2026",
+      "115/09/04",
+      {
+        "company_id": "6415",
+        "seq_no": "2",
+        "skey": "6415202609042",
+        "spoke_date": "20260904",
+        "spoke_time": "101851",
+        "typek": "sii"
+      }
+    ],
+    [
+      "6415",
+      "矽力*-KY",
+      "本公司受邀參加Macquarie NEXT INNOVATIONS Tech conference 2026",
+      "115/09/04",
+      {
+        "company_id": "6415",
+        "seq_no": "1",
+        "skey": "6415202609041",
+        "spoke_date": "20260904",
+        "spoke_time": "101822",
+        "typek": "sii"
+      }
+    ]
+  ],
   "eric": [],
   "ian": [],
   "jyun": [],
   "nick": [],
-  "ryan": []
+  "ryan": [
+    [
+      "2464",
+      "盟立",
+      "澄清媒體報導",
+      "115/09/04",
+      {
+        "company_id": "2464",
+        "seq_no": "1",
+        "skey": "2464202609041",
+        "spoke_date": "20260904",
+        "spoke_time": "94505",
+        "typek": "sii"
+      }
+    ]
+  ]
 }
