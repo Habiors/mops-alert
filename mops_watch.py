@@ -159,12 +159,17 @@ PEOPLE = {
             "3037": "欣興", "8046": "南電", "3189": "景碩", "4958": "臻鼎-KY",
             "2368": "金像電", "2313": "華通",
             "2383": "台光電", "6274": "台燿", "1303": "南亞", "8358": "金居",
+            "6213": "聯茂", "3044": "健鼎",
             "2327": "國巨", "2492": "華新科", "3042": "晶技",
             "3533": "嘉澤", "3665": "貿聯-KY", "3653": "健策", "2059": "川湖",
         },
         # 2026-09-09: synced against MergeRobot's 2026-09-04 Tier1/Tier2 edit -
         # Tier1 dropped 6285 啟碁, added 2357 華碩/2301 光寶科/3017 奇鋐; CCL/
-        # 銅箔基板 dropped 6213 聯茂/3044 健鼎, added 1303 南亞/8358 金居. Also
+        # 銅箔基板 added 1303 南亞/8358 金居 (MergeRobot's 09-04 edit had also
+        # dropped 6213 聯茂/3044 健鼎 here, but Charles asked same day to add
+        # them back to this list specifically - MOPS-alert's Ian watchlist is
+        # now intentionally wider than MergeRobot's on this pair, same as
+        # Charles's own list diverged on purpose back on 2026-08-16). Also
         # dropped 6805 富世達, which MergeRobot's current Ian list doesn't
         # carry (it's Eric's Tier1, not Ian's).
     },
