@@ -342,15 +342,26 @@ def main():
     # 2026-09-04 per Charles ("如果在晚上11:30以前沒有做最後一次更新，就不需要再
     # 做更新"): the last scheduled slot is 21:26 Taipei, but GitHub's own
     # schedule-trigger delay has been observed up to ~36 min on this repo -
-    # if it slips even further and this run actually starts after 23:30
-    # Taipei, treat the day as already closed and skip entirely rather than
-    # doing a late catch-up update. Doesn't apply to a manual
-    # workflow_dispatch trigger, which should always run when asked.
-    if not args.dry_run and now.hour * 60 + now.minute >= 23 * 60 + 30 \
-            and os.environ.get("GITHUB_EVENT_NAME") == "schedule":
-        print(f"It's {now.strftime('%H:%M')} Taipei - past the 23:30 cutoff "
-              f"for today's last scheduled slot. Skipping this run.")
-        return
+    # if it slips even further, treat the day as already closed and skip
+    # entirely rather than doing a late catch-up update.
+    #
+    # Tightened 2026-09-09 per Charles ("晚上最後一次自動更新不可以超過22:30,
+    # 凌晨時段請勿更新"): cutoff moved from 23:30 to 22:30, AND the old check
+    # had a midnight-rollover gap - it only compared now >= 23:30, so a run
+    # delayed enough to roll past midnight (hour resets to 0) would read as
+    # e.g. 00:15 and slip through uncaught, running in the 凌晨 hours. Now
+    # checks a full quiet window spanning midnight (22:30 through the next
+    # 06:00) in one range check instead of a single one-sided cutoff.
+    # Doesn't apply to a manual workflow_dispatch trigger, which should
+    # always run when asked.
+    _QUIET_START_MIN = 22 * 60 + 30  # 22:30 - last automatic update of the night
+    _QUIET_END_MIN = 6 * 60          # 06:00 - earliest an automatic update may run
+    if not args.dry_run and os.environ.get("GITHUB_EVENT_NAME") == "schedule":
+        minute_of_day = now.hour * 60 + now.minute
+        if minute_of_day >= _QUIET_START_MIN or minute_of_day < _QUIET_END_MIN:
+            print(f"It's {now.strftime('%H:%M')} Taipei - within the quiet "
+                  f"window (22:30-06:00). Skipping this scheduled run.")
+            return
 
     today_iso = now.date().isoformat()
     today_roc_slash = _to_roc_slash(now)
