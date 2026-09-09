@@ -349,18 +349,20 @@ def main():
     # 凌晨時段請勿更新"): cutoff moved from 23:30 to 22:30, AND the old check
     # had a midnight-rollover gap - it only compared now >= 23:30, so a run
     # delayed enough to roll past midnight (hour resets to 0) would read as
-    # e.g. 00:15 and slip through uncaught, running in the 凌晨 hours. Now
-    # checks a full quiet window spanning midnight (22:30 through the next
-    # 06:00) in one range check instead of a single one-sided cutoff.
-    # Doesn't apply to a manual workflow_dispatch trigger, which should
-    # always run when asked.
+    # e.g. 00:15 and slip through uncaught, running in the 凌晨 hours (Charles
+    # confirmed he'd actually seen it fire around 2am, which matches this
+    # exact gap). Quiet window end extended same day from 06:00 to 11:30 per
+    # Charles ("22:30~11:30") - checks a full window spanning midnight
+    # (22:30 through the next 11:30) in one range check instead of a single
+    # one-sided cutoff. Doesn't apply to a manual workflow_dispatch trigger,
+    # which should always run when asked.
     _QUIET_START_MIN = 22 * 60 + 30  # 22:30 - last automatic update of the night
-    _QUIET_END_MIN = 6 * 60          # 06:00 - earliest an automatic update may run
+    _QUIET_END_MIN = 11 * 60 + 30    # 11:30 - earliest an automatic update may run
     if not args.dry_run and os.environ.get("GITHUB_EVENT_NAME") == "schedule":
         minute_of_day = now.hour * 60 + now.minute
         if minute_of_day >= _QUIET_START_MIN or minute_of_day < _QUIET_END_MIN:
             print(f"It's {now.strftime('%H:%M')} Taipei - within the quiet "
-                  f"window (22:30-06:00). Skipping this scheduled run.")
+                  f"window (22:30-11:30). Skipping this scheduled run.")
             return
 
     today_iso = now.date().isoformat()
