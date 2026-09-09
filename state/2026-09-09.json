@@ -1,7 +1,51 @@
 {
-  "charles": [],
+  "charles": [
+    [
+      "3105",
+      "穩懋",
+      "公告本公司受邀參加瑞銀證券主辦之「UBS Taiwan Summit 2026」",
+      "115/09/09",
+      {
+        "company_id": "3105",
+        "seq_no": "1",
+        "skey": "3105202609091",
+        "spoke_date": "20260909",
+        "spoke_time": "140318",
+        "typek": "otc"
+      }
+    ],
+    [
+      "4991",
+      "環宇-KY",
+      "本公司受邀參加UBS證券舉辦之UBS Taiwan Summit 2026",
+      "115/09/09",
+      {
+        "company_id": "4991",
+        "seq_no": "1",
+        "skey": "4991202609091",
+        "spoke_date": "20260909",
+        "spoke_time": "140225",
+        "typek": "otc"
+      }
+    ]
+  ],
   "eric": [],
-  "ian": [],
+  "ian": [
+    [
+      "6669",
+      "緯穎",
+      "本公司受邀參加UBS Securities舉辦之UBS Taiwan Summit 2026",
+      "115/09/09",
+      {
+        "company_id": "6669",
+        "seq_no": "1",
+        "skey": "6669202609091",
+        "spoke_date": "20260909",
+        "spoke_time": "141305",
+        "typek": "sii"
+      }
+    ]
+  ],
   "jyun": [],
   "nick": [],
   "ryan": [
