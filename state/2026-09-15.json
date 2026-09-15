@@ -1,0 +1,110 @@
+{
+  "charles": [
+    [
+      "3081",
+      "聯亞",
+      "公告本公司取得機器設備",
+      "115/09/15",
+      {
+        "company_id": "3081",
+        "seq_no": "2",
+        "skey": "3081202609152",
+        "spoke_date": "20260915",
+        "spoke_time": "161828",
+        "typek": "otc"
+      }
+    ]
+  ],
+  "eric": [
+    [
+      "2308",
+      "台達電",
+      "代子公司DEISG公告董事會決議發行以所持有之Delta Electronics (Thailand) Public Company Limited股份作為交換 標的之海外可交換公司債（下稱「本次可交換債」）",
+      "115/09/15",
+      {
+        "company_id": "2308",
+        "seq_no": "5",
+        "skey": "2308202609145",
+        "spoke_date": "20260915",
+        "spoke_time": "64117",
+        "typek": "sii"
+      }
+    ]
+  ],
+  "ian": [
+    [
+      "3044",
+      "健鼎",
+      "健鼎受邀參加瑞銀證券 2026 Taiwan Summit",
+      "115/09/15",
+      {
+        "company_id": "3044",
+        "seq_no": "1",
+        "skey": "3044202609151",
+        "spoke_date": "20260915",
+        "spoke_time": "150352",
+        "typek": "sii"
+      }
+    ],
+    [
+      "2313",
+      "華通",
+      "代子公司COMPEQ Technology (Thailand) CO., LTD.公告購買機器設備",
+      "115/09/15",
+      {
+        "company_id": "2313",
+        "seq_no": "1",
+        "skey": "2313202609151",
+        "spoke_date": "20260915",
+        "spoke_time": "141758",
+        "typek": "sii"
+      }
+    ],
+    [
+      "3042",
+      "晶技",
+      "本公司115年8月自結損益公告",
+      "115/09/15",
+      {
+        "company_id": "3042",
+        "seq_no": "1",
+        "skey": "3042202609091",
+        "spoke_date": "20260915",
+        "spoke_time": "134451",
+        "typek": "sii"
+      }
+    ],
+    [
+      "2308",
+      "台達電",
+      "代子公司DEISG公告董事會決議發行以所持有之Delta Electronics (Thailand) Public Company Limited股份作為交換 標的之海外可交換公司債（下稱「本次可交換債」）",
+      "115/09/15",
+      {
+        "company_id": "2308",
+        "seq_no": "5",
+        "skey": "2308202609145",
+        "spoke_date": "20260915",
+        "spoke_time": "64117",
+        "typek": "sii"
+      }
+    ]
+  ],
+  "jyun": [
+    [
+      "3081",
+      "聯亞",
+      "公告本公司取得機器設備",
+      "115/09/15",
+      {
+        "company_id": "3081",
+        "seq_no": "2",
+        "skey": "3081202609152",
+        "spoke_date": "20260915",
+        "spoke_time": "161828",
+        "typek": "otc"
+      }
+    ]
+  ],
+  "nick": [],
+  "ryan": []
+}
