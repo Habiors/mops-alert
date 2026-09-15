@@ -173,6 +173,20 @@
         "spoke_time": "163749",
         "typek": "otc"
       }
+    ],
+    [
+      "7769",
+      "鴻勁",
+      "公告本公司受邀參加瑞銀證券(UBS)舉辦之UBS Taiwan Summit 2026",
+      "115/09/15",
+      {
+        "company_id": "7769",
+        "seq_no": "1",
+        "skey": "7769202609151",
+        "spoke_date": "20260915",
+        "spoke_time": "183354",
+        "typek": "sii"
+      }
     ]
   ],
   "nick": [
