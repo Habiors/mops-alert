@@ -60,10 +60,15 @@ jobs:
           git diff --staged --quiet || git commit -m "Update MOPS alert state ($(date -u +%Y-%m-%dT%H:%M:%SZ) UTC)"
           git push
 
+      # A scheduled run that lands in the quiet window exits early without
+      # writing docs/ - skip publishing then instead of failing the run.
       - uses: actions/configure-pages@v6
+        if: hashFiles('docs/index.html') != ''
 
       - uses: actions/upload-pages-artifact@v5
+        if: hashFiles('docs/index.html') != ''
         with:
           path: docs
 
       - uses: actions/deploy-pages@v5
+        if: hashFiles('docs/index.html') != ''
