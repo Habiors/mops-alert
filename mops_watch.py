@@ -239,6 +239,16 @@ PEOPLE = {
             "3533": "嘉澤", "6715": "嘉基", "3665": "貿聯-KY", "7861": "貝爾威勒",
         },
     },
+    "leo": {
+        "label": "Leo",
+        "beat": "自選關注股",
+        "tickers": {
+            "2357": "華碩", "2376": "技嘉", "1215": "卜蜂",
+        },
+        # 2026-11-17: Leo added as the seventh person, same day as MergeRobot
+        # (LeoRobot). His list will grow; keep it in sync with MergeRobot's
+        # daily_digest_instructions.md Step 4.
+    },
 }
 
 
