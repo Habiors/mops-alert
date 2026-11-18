@@ -245,11 +245,14 @@ PEOPLE = {
         "label": "Leo",
         "beat": "自選關注股",
         "tickers": {
-            "2357": "華碩", "2376": "技嘉", "1215": "卜蜂",
+            "2357": "華碩", "2376": "技嘉", "6669": "緯穎",
+            "1215": "卜蜂", "1477": "聚陽", "1476": "儒鴻",
         },
         # 2026-11-17: Leo added as the seventh person, same day as MergeRobot
         # (LeoRobot). His list will grow; keep it in sync with MergeRobot's
         # daily_digest_instructions.md Step 4.
+        # 2026-11-18: synced against MergeRobot's split into 電子 (2357/2376/
+        # 6669) and 傳產 (1215/1477/1476) - added 6669 緯穎, 1477 聚陽, 1476 儒鴻.
     },
 }
 
