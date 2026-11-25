@@ -395,13 +395,15 @@ def main():
     # (22:30 through the next 11:30) in one range check instead of a single
     # one-sided cutoff. Doesn't apply to a manual workflow_dispatch trigger,
     # which should always run when asked.
-    _QUIET_START_MIN = 22 * 60 + 30  # 22:30 - last automatic update of the night
+    # Start moved 22:30 -> 23:45 on 2026-11-25 per Charles ("改成 超過23:45再跳過"),
+    # because GitHub's schedule delay grew to 8-10h and every slot was landing after 22:30.
+    _QUIET_START_MIN = 23 * 60 + 45  # 23:45 - last automatic update of the night
     _QUIET_END_MIN = 11 * 60 + 30    # 11:30 - earliest an automatic update may run
     if not args.dry_run and os.environ.get("GITHUB_EVENT_NAME") == "schedule":
         minute_of_day = now.hour * 60 + now.minute
         if minute_of_day >= _QUIET_START_MIN or minute_of_day < _QUIET_END_MIN:
             print(f"It's {now.strftime('%H:%M')} Taipei - within the quiet "
-                  f"window (22:30-11:30). Skipping this scheduled run.")
+                  f"window (23:45-11:30). Skipping this scheduled run.")
             return
 
     today_iso = now.date().isoformat()
