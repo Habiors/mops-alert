@@ -17,7 +17,7 @@ on:
     # trigger delay (observed up to ~36 min on this repo on 2026-08-17,
     # unrelated to the cron time chosen) - it's just a 4-minute offset from
     # the previous :00/:30 slots.
-    - cron: "56 5 * * 1-5"   # 13:56 Taipei
+    - cron: "5 5 * * 1-5"    # 13:05 Taipei (moved from 13:56 on 2026-11-25 per Charles)
     - cron: "56 6 * * 1-5"   # 14:56 Taipei
     - cron: "56 7 * * 1-5"   # 15:56 Taipei
     - cron: "56 8 * * 1-5"   # 16:56 Taipei
